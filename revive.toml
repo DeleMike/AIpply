@@ -1,0 +1,8 @@
+ignoreGeneratedHeader = false
+severity = "warning"
+
+[rule.blank-imports]
+[rule.exported]
+[rule.var-naming]
+[rule.indent-error-flow]
+[rule.error-return]

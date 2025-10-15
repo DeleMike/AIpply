@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# --- Colors ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+echo -e "${CYAN}${BOLD}→ Running gofmt...${RESET}"
+GOFMT_FILES=$(gofmt -l .)
+
+if [ -n "${GOFMT_FILES}" ]; then
+    echo -e "\n${YELLOW}⚠️  Files need to be formatted:${RESET}"
+    echo "${GOFMT_FILES}"
+
+    echo -e "\n${CYAN}Formatting now...${RESET}"
+    gofmt -w .
+
+    echo -e "\n${RED}${BOLD}Some files were not properly formatted. Changes have been made.${RESET}"
+    echo -e "${YELLOW}Please review the changes and run 'git add' on the formatted files:${RESET}"
+    echo "${GOFMT_FILES}"
+    echo -e "\n${RED}Commit aborted.${RESET}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ All files are properly formatted.${RESET}"
+exit 0
