@@ -10,11 +10,12 @@ func SetupRouter(r *gin.Engine) {
 	r.GET("/", routes.Health)
 
 	// API versioning
-	// api := r.Group("/api")
-	// {
-	// 	v1 := api.Group("/v1")
-	// 	{
-	//
-	// 	}
-	// }
+	api := r.Group("/api")
+	{
+		v1 := api.Group("/v1")
+		{
+			v1.POST("/generate-questions", routes.GenerateQuestions)
+
+		}
+	}
 }
