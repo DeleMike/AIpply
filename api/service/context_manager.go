@@ -5,12 +5,14 @@ import (
 	"strings"
 )
 
+// JobContext is a context class
 type JobContext struct {
 	Role     string
 	Company  string
 	Keywords []string
 }
 
+// ExtractJobContext is used to extract job context
 func ExtractJobContext(jobDescription string) JobContext {
 	var ctx JobContext
 

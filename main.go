@@ -24,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize LLM service: %v", err)
 	}
-	
+
 	log.Printf("LLM Client initialized: %v", service.LLMClient != nil)
 
 	// start server

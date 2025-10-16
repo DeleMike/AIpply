@@ -10,6 +10,7 @@ import (
 	"google.golang.org/genai"
 )
 
+// my LLM
 var LLMClient *genai.Client
 
 func InitLLMService(ctx context.Context, apiKey string) error {
