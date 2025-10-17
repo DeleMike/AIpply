@@ -1,18 +1,26 @@
-// services provides core business logic and operations for the AIpply application.
+// Package service provides core business logic and operations for the AIpply application.
 package service
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"google.golang.org/genai"
 )
 
-// my LLM
+// LLMClient is a shared Gemini API client instance used throughout the application.
 var LLMClient *genai.Client
 
+// float32Ptr returns a pointer to the given float32 value.
+func float32Ptr(f float32) *float32 {
+	return &f
+}
+
+// InitLLMService initializes the Gemini LLM client with the provided API key.
+// It stores the client in a global variable for later reuse.
 func InitLLMService(ctx context.Context, apiKey string) error {
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  apiKey,
@@ -25,23 +33,14 @@ func InitLLMService(ctx context.Context, apiKey string) error {
 	return nil
 }
 
-func float32Ptr(f float32) *float32 {
-	return &f
-}
-
-// ProcessUserPayload takes the genai client and the job description,
-// and asks Gemini to generate interview questions.
+// ProcessUserPayload takes a job description and experience level,
+// sends them to the Gemini model, and returns a list of generated interview questions.
 func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescription string, experienceLevel string) ([]string, error) {
 	model := "gemini-2.0-flash"
-
-	jobCtx := ExtractJobContext(jobDescription)
 
 	prompt := fmt.Sprintf(
 		Prompt,
 		experienceLevel,
-		jobCtx.Role,
-		jobCtx.Company,
-		strings.Join(jobCtx.Keywords, ", "),
 		jobDescription,
 	)
 
@@ -73,15 +72,26 @@ func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescriptio
 	return questions, nil
 }
 
-// parseQuestions converts the raw LLM text into a []string slice.
+// parseQuestions cleans and structures raw model output into a slice of questions.
 func parseQuestions(output string) []string {
 	var result []string
-	for line := range strings.SplitSeq(output, "\n") {
+	lines := strings.Split(output, "\n")
+
+	// If the first line isn't a question, skip it
+	if len(lines) > 0 && !strings.Contains(lines[0], "?") {
+		lines = lines[1:]
+	}
+
+	// This regex finds lines that may start with numbers, bullets, or asterisks.
+	leadingJunk := regexp.MustCompile(`^\s*([\d\.\-\*•\)]+\s*)*(.*)`)
+
+	for _, line := range lines {
 		line = strings.TrimSpace(line)
 		if line != "" {
-			// Remove leading numbers, bullets, or extra dots/spaces
-			line = strings.TrimLeft(line, "0123456789.-)• ")
-			result = append(result, line)
+			matches := leadingJunk.FindStringSubmatch(line)
+			if len(matches) > 2 && matches[2] != "" {
+				result = append(result, matches[2])
+			}
 		}
 	}
 

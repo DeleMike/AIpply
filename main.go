@@ -7,7 +7,7 @@ import (
 
 	"github.com/DeleMike/AIpply/api"
 	"github.com/DeleMike/AIpply/api/service"
-	"github.com/DeleMike/AIpply/api/utils"
+	"github.com/DeleMike/AIpply/api/stringutil"
 	"github.com/spf13/viper"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	// Initialize LLM service once
 	ctx := context.Background()
 	apiKey := viper.GetString("api_key")
-	log.Printf("API Key loaded: %v", utils.MaskString(apiKey))
+	log.Printf("API Key loaded: %v", stringutil.MaskString(apiKey))
 
 	err := service.InitLLMService(ctx, apiKey)
 	if err != nil {

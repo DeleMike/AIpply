@@ -1,5 +1,5 @@
-// Package utils contains utility functions and error handling mechanisms for the AIpply application.
-package utils
+// Package apierrors defines common error constants for the AIpply API.
+package apierrors
 
 const (
 	// ErrInvalidRequest indicates that the request payload is invalid.
