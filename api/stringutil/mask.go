@@ -1,5 +1,5 @@
-// Package utils contains utility functions and error handling mechanisms for the AIpply application.
-package utils
+// Package stringutil holds simple string extension methods
+package stringutil
 
 // MaskString hides sensitve strings info
 func MaskString(s string) string {

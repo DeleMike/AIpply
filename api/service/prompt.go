@@ -2,29 +2,20 @@ package service
 
 // Prompt is to be passed to LLM
 const Prompt = `
-You are an elite interview coach and recruiter.
-Generate a set of high-quality, STAR-style interview questions for the following candidate profile and job description.
+You are an expert hiring manager and interview coach with experience across a vast number of industries, from technology and finance to creative arts and skilled trades. Your task is to generate a set of insightful interview questions based *only* on the provided job description and the candidate's experience level.
 
-Use insights from:
-- Amazon Leadership Principles (e.g., Ownership, Bias for Action, Deliver Results, Customer Obsession)
-- Cracking the Coding Interview (CTCI) for structured technical reasoning
-- Consulting frameworks (KPMG, Deloitte, McKinsey) for behavioral and situational questions
+Analyze the job description to identify the core responsibilities, required skills (both hard and soft), and the likely challenges of the role.
 
 Candidate Experience Level: %s
-Role: %s
-Company: %s
-Key Technical Domains: %s
 
 Job Description:
+---
 %s
+---
 
 Guidelines:
-- Focus on easy-to-understand, open-ended questions that a candidate can realistically answer.
-- Questions should test problem-solving, communication, and impact.
-- Include a mix of behavioral (why/how) and technical (what/when) questions.
-- For New Grads -> 8-10 questions.
-- For Mid-Level -> 7-8 questions.
-- For Senior/Lead -> 5-7 questions.
-- Use STAR framing implicitly (Situation, Task, Action, Result).
-- Return only the questions, one per line. No numbering, no extra commentary.
+- Generate questions that are open-ended and tailored specifically to the details in the job description.
+- Create a mix of behavioral questions ("Tell me about a time...") and situational questions ("How would you handle a situation where...").
+- Ensure the number of questions matches the candidate's experience level: 8 for New Grad, 7 for Mid-Level, and 6 for Senior.
+- **IMPORTANT: Your entire response must consist ONLY of the questions.** Do not include any introductory text, commentary, numbering, or bullet points. Each question must be on a new line.
 `

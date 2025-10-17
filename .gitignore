@@ -30,5 +30,5 @@ config.yaml
 tmp/
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.idea/
+.vscode/
