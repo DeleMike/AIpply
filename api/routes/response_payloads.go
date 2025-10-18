@@ -6,3 +6,8 @@ type QuestionsResponsePayload struct {
 	Message   string   `json:"message"`
 	Questions []string `json:"questions"`
 }
+
+type CVResponsePayload struct {
+	Message string `json:"message"`
+	CV      string `json:"cv"`
+}

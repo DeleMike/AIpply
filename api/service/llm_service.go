@@ -3,11 +3,13 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"regexp"
 	"strings"
 
+	"github.com/DeleMike/AIpply/api/models"
 	"google.golang.org/genai"
 )
 
@@ -39,7 +41,7 @@ func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescriptio
 	model := "gemini-2.0-flash"
 
 	prompt := fmt.Sprintf(
-		Prompt,
+		QuestionPrompt,
 		experienceLevel,
 		jobDescription,
 	)
@@ -49,7 +51,7 @@ func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescriptio
 		&genai.GenerateContentConfig{
 			Temperature:     float32Ptr(0.6),
 			TopP:            float32Ptr(0.9),
-			MaxOutputTokens: 900,
+			MaxOutputTokens: 1024,
 		},
 	)
 	if err != nil {
@@ -70,6 +72,50 @@ func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescriptio
 	questions := parseQuestions(string(output.String()))
 
 	return questions, nil
+}
+
+func ProcessUserPrepAnswers(ctx context.Context, client *genai.Client, jobDescription string, answers []models.AnswerPair) (string, error) {
+	model := "gemini-2.5-flash"
+
+	answersJSON, err := json.Marshal(answers)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal answers: %w", err)
+	}
+
+	prompt := fmt.Sprintf(
+		CVPrompt,
+		jobDescription,
+		string(answersJSON),
+	)
+
+	resp, err := client.Models.GenerateContent(ctx, model,
+		genai.Text(prompt),
+		&genai.GenerateContentConfig{
+			Temperature:     float32Ptr(0.2),
+			TopP:            float32Ptr(0.9),
+			MaxOutputTokens: 2500,
+		},
+	)
+
+	if err != nil {
+		log.Printf("error generating content from LLM: %v", err)
+		return "", fmt.Errorf("error from LLM: %w", err)
+	}
+
+	if len(resp.Candidates) == 0 || resp.Candidates[0].Content == nil || len(resp.Candidates[0].Content.Parts) == 0 {
+		return "", fmt.Errorf("no candidates returned from model")
+	}
+
+	var cvText strings.Builder
+	for _, part := range resp.Candidates[0].Content.Parts {
+		cvText.WriteString(string(part.Text))
+	}
+
+	if cvText.Len() == 0 {
+		return "", fmt.Errorf("empty response from model")
+	}
+
+	return cvText.String(), nil
 }
 
 // parseQuestions cleans and structures raw model output into a slice of questions.
