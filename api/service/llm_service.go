@@ -74,6 +74,7 @@ func ProcessUserPayload(ctx context.Context, client *genai.Client, jobDescriptio
 	return questions, nil
 }
 
+// ProcessUserPrepAnswers is used to build the CV for the user based on their answered questions
 func ProcessUserPrepAnswers(ctx context.Context, client *genai.Client, jobDescription string, answers []models.AnswerPair) (string, error) {
 	model := "gemini-2.5-flash"
 
