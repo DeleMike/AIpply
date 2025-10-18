@@ -2,9 +2,8 @@
 package routes
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/DeleMike/AIpply/api/apierrors"
 	"github.com/DeleMike/AIpply/api/service"
 	"github.com/gin-gonic/gin"
 )
@@ -13,30 +12,17 @@ import (
 // sends it to the LLM service to generate interview questions,
 // and returns the questions in a structured JSON response.
 func GenerateQuestions(c *gin.Context) {
-	var request GenerateQuestionsRequest
+	handleLLMRequest(c, &GenerateQuestionsRequest{}, func(ctx context.Context, request *GenerateQuestionsRequest) (any, error) {
+		questions, err := service.ProcessUserPayload(c.Request.Context(), service.LLMClient, request.JobDescription, request.ExperienceLevel)
+		if err != nil {
+			return nil, err
+		}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": apierrors.ErrInvalidRequest})
-		return
-	}
+		return QuestionsResponsePayload{
+			Message:   "Questions generated successfully!",
+			Questions: questions,
+		}, nil
 
-	if service.LLMClient == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": apierrors.ErrLLMNotInitialized})
-		return
-	}
-
-	questions, err := service.ProcessUserPayload(c.Request.Context(), service.LLMClient, request.JobDescription, request.ExperienceLevel)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": apierrors.ErrWeCouldNotProcessRequest})
-		return
-	}
-
-	response := QuestionsResponsePayload{
-		Message:   "Questions generated successfully!",
-		Questions: questions,
-	}
-
-	c.JSON(http.StatusOK, response)
+	})
 
 }
