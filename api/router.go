@@ -15,6 +15,7 @@ func SetupRouter(r *gin.Engine) {
 		v1 := api.Group("/v1")
 		{
 			v1.POST("/generate-questions", routes.GenerateQuestions)
+			v1.POST("/generate-cv", routes.GenerateCV)
 
 		}
 	}
