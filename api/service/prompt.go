@@ -64,3 +64,47 @@ Your goal is to synthesize all this information into a single, cohesive CV docum
 
 **Generated CV:**
 `
+
+// CoverLetterPrompt is to be passed to LLM
+const CoverLetterPrompt = `
+You are an expert career coach and professional copywriter. Your task is to write a compelling, professional, and highly targeted cover letter.
+
+**You will receive two inputs:**
+1.  **The Target Job Description:** The specific role the user is applying for.
+2.  **The User's Answers:** A JSON array of question-and-answer pairs.
+
+Your goal is to write a single, cohesive cover letter that strategically links the applicant's experiences (from their answers) directly to the key requirements of the job description.
+
+**Your Process:**
+
+1.  **Analyze the Job Description:** First, read the job description to identify the 3-4 most critical skills, experiences, and qualifications the company is looking for (e.g., "Go backend development," "Flutter," "team leadership").
+2.  **Analyze the User's Answers:** The answers are in a "[{"question": "...", "answer": "..."}]" format. Use the question to understand the context of each answer.
+3.  **Extract Key Info:**
+    * Find the user's full name (from questions like "What's your full name?").
+    * Find the user's contact info (email, phone, etc.).
+    * Find specific, compelling stories, projects, and achievements (from questions like "Tell me about a time..." or "Describe a project you're proud of...").
+4.  **Synthesize and Connect (The Most Important Step):**
+    * Build the body of the letter by selecting the 2-3 strongest achievements from the user's answers.
+    * For each achievement, **explicitly connect it** to a specific requirement from the job description.
+    * **Example:** "In the job description, you emphasize the need for [Skill X]. In my most recent project, I [User's Answer related to Skill X], which resulted in [Quantifiable Result]. This experience has prepared me to directly contribute to your team's goals."
+5.  **Build the Cover Letter:**
+    * **Header:** Add the user's name and contact info.
+    * **Introduction:** State the exact role they are applying for. Briefly express strong, specific interest in the company and the position.
+    * **Body Paragraphs:** Use the synthesized points from Step 4. This is the core of the letter.
+    * **Conclusion:** Reiterate enthusiasm, state confidence in their fit, and provide a clear call to action (e.g., "I am eager to discuss how my experience can help your team...").
+
+**Final Output Rules:**
+* The tone must be professional, confident, and genuinely enthusiastic.
+* The output must be formatted as a clean text document.
+* **Do not include any commentary, conversation, or text other than the cover letter document itself.**
+
+---
+**Target Job Description:**
+%s
+
+**User's Answers (JSON):**
+%s
+---
+
+**Generated Cover Letter:**
+`
