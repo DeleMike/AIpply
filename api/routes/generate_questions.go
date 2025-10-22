@@ -4,6 +4,7 @@ package routes
 import (
 	"context"
 
+	"github.com/DeleMike/AIpply/api/metrics"
 	"github.com/DeleMike/AIpply/api/service"
 	"github.com/gin-gonic/gin"
 )
@@ -14,9 +15,12 @@ import (
 func GenerateQuestions(c *gin.Context) {
 	handleLLMRequest(c, &GenerateQuestionsRequest{}, func(ctx context.Context, request *GenerateQuestionsRequest) (any, error) {
 		questions, err := service.ProcessUserPayload(c.Request.Context(), service.LLMClient, request.JobDescription, request.ExperienceLevel)
+
 		if err != nil {
 			return nil, err
 		}
+
+		metrics.IncrementCoverLetter()
 
 		return QuestionsResponsePayload{
 			Message:   "Questions generated successfully!",

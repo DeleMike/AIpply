@@ -4,6 +4,7 @@ package routes
 import (
 	"context"
 
+	"github.com/DeleMike/AIpply/api/metrics"
 	"github.com/DeleMike/AIpply/api/service"
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,8 @@ func GenerateCV(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
+
+		metrics.IncrementCV()
 
 		return CVResponsePayload{
 			Message: "CV generated successfully!",
