@@ -119,6 +119,51 @@ func ProcessUserPrepAnswers(ctx context.Context, client *genai.Client, jobDescri
 	return cvText.String(), nil
 }
 
+// ProcessUserAnswersForCoverLetter is used to generate the cover letter of the user
+func ProcessUserAnswersForCoverLetter(ctx context.Context, client *genai.Client, jobDescription string, answers []models.AnswerPair) (string, error) {
+	model := "gemini-2.5-flash"
+
+	answersJSON, err := json.Marshal(answers)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal answers: %w", err)
+	}
+
+	prompt := fmt.Sprintf(
+		CoverLetterPrompt,
+		jobDescription,
+		string(answersJSON),
+	)
+
+	resp, err := client.Models.GenerateContent(ctx, model,
+		genai.Text(prompt),
+		&genai.GenerateContentConfig{
+			Temperature:     float32Ptr(0.2),
+			TopP:            float32Ptr(0.9),
+			MaxOutputTokens: 2500,
+		},
+	)
+
+	if err != nil {
+		log.Printf("error generating content from LLM: %v", err)
+		return "", fmt.Errorf("error from LLM: %w", err)
+	}
+
+	if len(resp.Candidates) == 0 || resp.Candidates[0].Content == nil || len(resp.Candidates[0].Content.Parts) == 0 {
+		return "", fmt.Errorf("no candidates returned from model")
+	}
+
+	var cvText strings.Builder
+	for _, part := range resp.Candidates[0].Content.Parts {
+		cvText.WriteString(string(part.Text))
+	}
+
+	if cvText.Len() == 0 {
+		return "", fmt.Errorf("empty response from model")
+	}
+
+	return cvText.String(), nil
+}
+
 // parseQuestions cleans and structures raw model output into a slice of questions.
 func parseQuestions(output string) []string {
 	var result []string
