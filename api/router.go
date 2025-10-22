@@ -17,6 +17,7 @@ func SetupRouter(r *gin.Engine) {
 			v1.POST("/generate-questions", routes.GenerateQuestions)
 			v1.POST("/generate-cv", routes.GenerateCV)
 			v1.POST("/generate-cover-letter", routes.GenerateCoverLetter)
+			v1.GET("/metrics", routes.GetMetrics)
 
 		}
 	}
