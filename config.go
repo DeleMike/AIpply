@@ -11,7 +11,7 @@ import (
 type Config struct {
 	Server struct {
 		Port    int
-		GinMode string
+		GinMode string `mapstructure:"gin_mode"`
 	}
 	App struct {
 		Name        string
@@ -20,33 +20,45 @@ type Config struct {
 	Logging struct {
 		Level string
 	}
+
+	APIKey string `mapstructure:"api_key"`
+
+	Redis struct {
+		Addr     string
+		Password string
+		DB       int
+	}
 }
 
 // LoadConfig reads configuration from file or environment variables.
-func LoadConfig() {
+func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+
+	viper.BindEnv("api_key", "API_KEY")
+	viper.BindEnv("redis.addr", "REDIS_ADDR")
+	viper.BindEnv("redis.password", "REDIS_PASSWORD")
+	viper.BindEnv("redis.db", "REDIS_DB")
 	viper.BindEnv("server.port", "SERVER_PORT")
 	viper.BindEnv("app.name", "APP_NAME")
 	viper.BindEnv("server.gin_mode", "GIN_MODE")
 
-	err := viper.ReadInConfig()
-	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			// Config file not found; fallback to ENV
-			if !viper.IsSet("server.port") || !viper.IsSet("app.name") {
-				panic(fmt.Errorf("config file not found and required environment variables missing: %w", err))
-			}
-		} else {
-			// Config file exists but other error (parse error, etc.)
-			panic(fmt.Errorf("error reading config file: %w", err))
-		}
-	}
+	viper.SetDefault("redis.addr", "localhost:6379")
+	viper.SetDefault("redis.db", 0)
+	viper.SetDefault("redis.password", "")
 
 	var cfg Config
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			// Config file was found but another error occurred
+			return nil, fmt.Errorf("error reading config file: %w", err)
+		}
+		// Config file not found, but that's ok, we'll rely on ENVs/defaults
+	}
+
 	if err := viper.Unmarshal(&cfg); err != nil {
-		panic(fmt.Errorf("unable to decode into struct: %w", err))
+		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 	}
 
 	// Print loaded config for verification
@@ -54,4 +66,6 @@ func LoadConfig() {
 	fmt.Println("Server Gin Mode:", cfg.Server.GinMode)
 	fmt.Println("Server port:", cfg.Server.Port)
 	fmt.Println("App Name:", cfg.App.Name)
+
+	return &cfg, nil
 }

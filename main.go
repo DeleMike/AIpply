@@ -6,26 +6,21 @@ import (
 	"log"
 
 	"github.com/DeleMike/AIpply/api"
+	"github.com/DeleMike/AIpply/api/metrics"
 	"github.com/DeleMike/AIpply/api/service"
-	"github.com/DeleMike/AIpply/api/stringutil"
-	"github.com/spf13/viper"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// load configurations
-	LoadConfig()
-
-	// Initialize LLM service once
-	ctx := context.Background()
-	apiKey := viper.GetString("api_key")
-	log.Printf("API Key loaded: %v", stringutil.MaskString(apiKey))
-
-	err := service.InitLLMService(ctx, apiKey)
+	cfg, err := LoadConfig()
 	if err != nil {
-		log.Fatalf("Failed to initialize LLM service: %v", err)
+		log.Fatalf("Error loading config: %v", err)
 	}
 
-	log.Printf("LLM Client initialized: %v", service.LLMClient != nil)
+	metrics.InitRedis(cfg.Redis.Addr, cfg.Redis.Password, cfg.Redis.DB)
+	service.InitLLMService(context.Background(), cfg.APIKey)
+	gin.SetMode(cfg.Server.GinMode)
 
 	// start server
 	log.Println("🚀 Server starting up...")
