@@ -1,3 +1,4 @@
+// Package metrics provides Prometheus-style metrics tracking and exposure.
 package metrics
 
 import (
@@ -62,13 +63,13 @@ func IncrementCoverLetter() {
 	}
 }
 
-// MetricsResponse defines the JSON structure for our /metrics endpoint
+// MetricResponse defines the JSON structure for our /metrics endpoint
 type MetricResponse struct {
 	CVGenerated          int64 `json:"cv_generated"`
 	CoverLetterGenerated int64 `json:"cover_letter_generated"`
 }
 
-// GetMetrics safely reads the current counts
+// GetMetrics safely reads the current CV and Cover Letter counts
 func GetMetrics() MetricResponse {
 	if redisClient == nil {
 		log.Println("Redis client not initialized, returning zero metrics")
