@@ -24,9 +24,9 @@ func GenerateCoverLetter(c *gin.Context) {
 
 		metrics.IncrementCoverLetter()
 
-		return CVResponsePayload{
+		return CoverLetterResponsePayload{
 			Message: "Cover letter generated successfully!",
-			CV:      coverLetter,
+			Cover:   coverLetter,
 		}, nil
 	})
 }
