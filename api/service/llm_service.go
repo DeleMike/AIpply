@@ -94,7 +94,7 @@ func ProcessUserPrepAnswers(ctx context.Context, client *genai.Client, jobDescri
 		&genai.GenerateContentConfig{
 			Temperature:     float32Ptr(0.2),
 			TopP:            float32Ptr(0.9),
-			MaxOutputTokens: 2500,
+			MaxOutputTokens: 10000,
 		},
 	)
 

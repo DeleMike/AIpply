@@ -1,10 +1,20 @@
+# Example configuration file for AIpply.
+# Copy this to `config.yaml` and fill in your actual values.
+
 server:
-  port: 5050
-  gin_mode: release
+  port: 5050            # The port your server will run on
+  gin_mode: release      # Options: "debug", "release", or "test"
+
+api_key: "your-api-key-here"   # Replace with your actual API key
 
 app:
-  name: "AIpply"
-  environment: "development"
+  name: "AIpply"               # Application name
+  environment: "development"   # Options: "development" or "production"
 
 logging:
-  level: "info"
+  level: "info"                # Options: "debug", "info", "warn", "error"
+
+redis:
+  addr: "localhost:6379"       # Redis server address
+  password: ""                 # Redis password (leave empty if none)
+  db: 0                        # Redis database index
