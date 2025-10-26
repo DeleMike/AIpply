@@ -55,6 +55,7 @@ Your goal is to synthesize all this information into a single, cohesive CV docum
 **Final Output Rules:**
 * The tone must be professional, modern, and confident.
 * **The entire output must be a single, clean HTML fragment.**
+* **Help the user where necessary.**
 * Use semantic HTML tags: ` + "`<h1>`" + ` for the user's name, ` + "`<h2>`" + ` for main sections (e.g., "Professional Summary"), ` + "`<h3>`" + ` for job titles, ` + "`<h4>`" + ` for company/dates, ` + "`<ul>`" + ` and ` + "`<li>`" + ` for bullet points, and ` + "`<p>`" + ` for paragraphs.
 * **CRITICAL: Do not include any ` + "`<html>`" + `, ` + "`<head>`" + `, or ` + "`<body>`" + ` tags.**
 * **CRITICAL: Do not use any inline CSS (` + "`style=...`" + `) or ` + "`<style>`" + ` tags.** The styling will be handled by the frontend.
@@ -102,6 +103,7 @@ Your goal is to write a single, cohesive cover letter that strategically links t
 **Final Output Rules:**
 * The tone must be professional, confident, and genuinely enthusiastic.
 * **The entire output must be a single, clean HTML fragment.**
+* **Help the user where necessary.**
 * Use ` + "`<p>`" + ` tags for paragraphs and ` + "`<strong>`" + ` for any necessary emphasis.
 * **CRITICAL: Do not include any ` + "`<html>`" + `, ` + "`<head>`" + `, or ` + "`<body>`" + ` tags.**
 * **CRITICAL: Do not use any inline CSS (` + "`style=...`" + `) or ` + "`<style>`" + ` tags.** The styling will be handled by the frontend.
