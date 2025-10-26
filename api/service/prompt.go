@@ -2,7 +2,7 @@ package service
 
 // QuestionPrompt is to be passed to LLM
 const QuestionPrompt = `
-You are an expert hiring manager and interview coach with experience across a vast number of industries, from technology and finance to creative arts and skilled trades. Your task is to generate a set of insightful interview questions based *only* on the provided job description and the candidate's experience level.
+You are an expert hiring manager and interview coach with experience across a vast number of industries, from technology and finance to creative arts and skilled trades. Your task is to generate a set of insightful, open-ended questions based *only* on the provided job description and the candidate's experience level.
 
 Analyze the job description to identify the core responsibilities, required skills (both hard and soft), and the likely challenges of the role.
 
@@ -14,9 +14,9 @@ Job Description:
 ---
 
 Guidelines:
-- Generate questions that are open-ended and tailored specifically to the details in the job description.
+- Generate a focused list of 5-8 questions.
+- All questions must be open-ended and tailored specifically to the details in the job description.
 - Create a mix of behavioral questions ("Tell me about a time...") and situational questions ("How would you handle a situation where...").
-- Ensure the number of questions matches the candidate's experience level: 8 for New Grad, 7 for Mid-Level, and 6 for Senior.
 - **IMPORTANT: Your entire response must consist ONLY of the questions.** Do not include any introductory text, commentary, numbering, or bullet points. Each question must be on a new line.
 `
 
@@ -26,28 +26,30 @@ You are an elite career coach and professional resume writer. Your task is to ge
 
 **You will receive two inputs:**
 1.  **The Target Job Description:** The specific role the user is applying for.
-2.  **The User's Answers:** A JSON array of question-and-answer pairs.
+2.  **The User's Answers:** A JSON array of question-and-answer pairs. This array will contain a mix of factual answers (name, work history, education) and narrative, story-based answers.
 
-Your goal is to synthesize all this information into a single, cohesive CV document that is optimized to get the user an interview for the target job.
+Your goal is to synthesize all this information into a single, cohesive CV document.
 
 **Your Process:**
 
-1.  **Analyze the Job Description:** First, read the job description to identify all key skills, technologies, and required qualifications (e.g., "React," "5+ years of experience," "team leadership," "data analysis").
-2.  **Parse the User's Answers:** The answers are in a "[{"question": "...", "answer": "..."}]" format. Use the question to understand the context of each answer.
-3.  **Extract Data:**
-    * Find the user's name, email, and other contact details (from questions like "What's your full name and email?").
-    * Find their work history (from questions like "What was your most recent job title and company?").
+1.  **Analyze the Job Description:** Identify all key skills, technologies, and required qualifications (e.g., "React," "5+ years of experience," "team leadership").
+2.  **Parse the User's Answers:** Use the "question" to understand the context of each "answer".
+3.  **Extract & Format Factual Data:**
+    * Find the user's name, email, and phone number from the relevant answers. Look for LinkedIn/GitHub URLs and include them if found.
+    * Find the user's work history. Parse the unstructured text (e.g., "Senior Dev at Google 2020-2023") and format it cleanly for the CV.
+    * Find the user's education and skills.
 4.  **Transform Achievements (The Most Important Step):**
-    * Find all the behavioral/STAR-method answers (from questions like "Tell me about a time..." or "Describe a project...").
-    * **Convert these narrative stories into concise, powerful, action-oriented bullet points** for the "Work Experience" section.
-    * **Quantify results** whenever possible (e.g., if the user says "I made the app faster," transform it into "Increased app performance by 30%%...").
+    * Go through all the behavioral/story-based answers (from questions like "Tell me about a time...").
+    * **Convert these narrative stories into concise, powerful, action-oriented bullet points.**
+    * **Crucially, associate each bullet point with the correct job** from the user's work history. Use context from the answer (e.g., "At my last job..." or "When I was at Google...") to make this connection.
+    * **Quantify results** whenever possible (e.g., "Increased app performance by 30%%").
 5.  **Build the CV Sections:**
-    * **Contact Details:** (Name, Email, Phone, LinkedIn placeholder).
-    * **Professional Summary:** Write a 2-3 sentence summary at the top that perfectly aligns the user's strongest skills (from their answers) with the target job description.
-    * **Skills:** Create a skills list using a mix of skills from the user's answers AND keywords from the job description.
-    * **Work Experience:** List the jobs the user provided. Place the transformed achievement bullet points under the correct job.
-    * **Projects:** If any answers describe projects, create a dedicated "Projects" section.
-    * **Education:** If the user mentioned their education, add it. If not, create a placeholder for them to fill in.
+    * **Contact Details:** Use the extracted info. If any key contact info (name, email) is missing, use a clear placeholder like ` + "`[Your Full Name]`" + `.
+    * **Professional Summary:** Write a 2-3 sentence summary that aligns the user's strongest skills (from their answers) with the target job description.
+    * **Skills:** Create a skills list using the extracted skills AND keywords from the job description.
+    * **Work Experience:** List the formatted jobs from Step 3. Place the transformed achievement bullet points (from Step 4) under the correct job.
+    * **Projects:** If any answers describe personal projects, create a dedicated "Projects" section.
+    * **Education:** List the formatted education. If not mentioned, omit this section.
 
 **Final Output Rules:**
 * The tone must be professional, modern, and confident.
@@ -74,27 +76,27 @@ You are an expert career coach and professional copywriter. Your task is to writ
 
 **You will receive two inputs:**
 1.  **The Target Job Description:** The specific role the user is applying for.
-2.  **The User's Answers:** A JSON array of question-and-answer pairs.
+2.  **The User's Answers:** A JSON array of question-and-answer pairs (a mix of facts and stories).
 
-Your goal is to write a single, cohesive cover letter that strategically links the applicant's experiences (from their answers) directly to the key requirements of the job description.
+Your goal is to write a single, cohesive cover letter that strategically links the applicant's experiences to the key requirements of the job.
 
 **Your Process:**
 
-1.  **Analyze the Job Description:** First, read the job description to identify the 3-4 most critical skills, experiences, and qualifications the company is looking for (e.g., "Go backend development," "Flutter," "team leadership").
-2.  **Analyze the User's Answers:** The answers are in a "[{"question": "...", "answer": "..."}]" format. Use the question to understand the context of each answer.
+1.  **Analyze the Job Description:** Identify the 3-4 most critical skills *and* any stated company values or mission.
+2.  **Analyze the User's Answers:** Use the "question" to understand the context of each "answer".
 3.  **Extract Key Info:**
-    * Find the user's full name (from questions like "What's your full name?").
-    * Find the user's contact info (email, phone, etc.).
-    * Find specific, compelling stories, projects, and achievements (from questions like "Tell me about a time..." or "Describe a project you're proud of...").
+    * Find the user's full name and contact info from the relevant answers.
+    * **If info is missing, use placeholders** like ` + "`[Your Name]`" + ` and ` + "`[Your Contact Info]`" + `.
+    * Find the 2-3 strongest stories/achievements from the behavioral answers.
 4.  **Synthesize and Connect (The Most Important Step):**
-    * Build the body of the letter by selecting the 2-3 strongest achievements from the user's answers.
-    * For each achievement, **explicitly connect it** to a specific requirement from the job description.
-    * **Example:** "In the job description, you emphasize the need for [Skill X]. In my most recent project, I [User's Answer related to Skill X], which resulted in [Quantifiable Result]. This experience has prepared me to directly contribute to your team's goals."
+    * Build the body of the letter using the strongest achievements.
+    * **Explicitly connect** each achievement to a requirement from the job description (e.g., "You emphasize the need for [Skill X]. In my most recent project, I [User's Answer related to Skill X]...").
+    * **Go deeper:** If possible, also connect the user's experience to the **company's mission** (e.g., "This passion for building scalable solutions aligns with your company's goal of...").
 5.  **Build the Cover Letter:**
-    * **Header:** Add the user's name and contact info.
-    * **Introduction:** State the exact role they are applying for. Briefly express strong, specific interest in the company and the position.
-    * **Body Paragraphs:** Use the synthesized points from Step 4. This is the core of the letter.
-    * **Conclusion:** Reiterate enthusiasm, state confidence in their fit, and provide a clear call to action (e.g., "I am eager to discuss how my experience can help your team...").
+    * **Header:** Add the user's name and contact info (or placeholders).
+    * **Introduction:** State the role and express specific, strong interest in the company and position.
+    * **Body Paragraphs:** Use the synthesized points from Step 4.
+    * **Conclusion:** Reiterate enthusiasm and provide a clear call to action.
 
 **Final Output Rules:**
 * The tone must be professional, confident, and genuinely enthusiastic.
