@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/DeleMike/AIpply/api/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
@@ -26,7 +27,7 @@ func StartUpServer() {
 	r := gin.Default()
 
 	// Add custom middleware.
-	r.Use(SetupCORS())
+	r.Use(middleware.SetupCORS())
 
 	// Setup API routes.
 	SetupRouter(r)

@@ -37,6 +37,11 @@ func InitRedis(addr string, password string, db int) {
 	})
 }
 
+// GetRedisClient allows other packages to access the client
+func GetRedisClient() *redis.Client {
+	return redisClient
+}
+
 // IncrementCV atomically adds one to the CV counter
 func IncrementCV() {
 	if redisClient == nil {
