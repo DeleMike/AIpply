@@ -1,7 +1,6 @@
 # 🤖 AIpply
 
-> AIpply for that role with confidence!
-
+> AIpply for that role with confidence – let AI craft your perfect application!
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/DeleMike/AIpply?style=for-the-badge)](https://goreportcard.com/report/github.com/DeleMike/AIpply)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/DeleMike/AIpply?style=for-the-badge&logo=go)](https://golang.org)
@@ -9,7 +8,16 @@
 [![codecov](https://img.shields.io/codecov/c/github/DeleMike/AIpply?style=for-the-badge&logo=codecov)](https://codecov.io/gh/DeleMike/AIpply)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-This repository contains the Go backend service for **AIpply**. It functions as a REST API that leverages the Google Gemini AI to generate tailored CVs, cover letters, and interview questions based on a job description and user-provided answers.
+AIpply is an open-source Go backend service designed to streamline job applications. It serves as a REST API that harnesses Google Gemini AI to create customized CVs, cover letters, and interview questions based on job descriptions and your personal responses. Whether you're a job seeker looking to save time or a developer interested in AI-driven tools, AIpply helps you stand out with professional, tailored documents.
+
+## ✨ Features
+
+- **Personalized Document Generation**: Automatically creates CVs and cover letters that align your experience with job requirements.
+- **Interview Prep**: Generates relevant, conversational questions based on the job description and your experience level.
+- **Powerful Prompts**: Uses role-based prompting strategies for high-quality, actionable outputs.
+- **Metrics Tracking**: Monitors generation counts via Redis for usage insights.
+- **Clean HTML Outputs**: Returns styled-ready HTML fragments for easy frontend integration.
+- **Extensible API**: Built with Gin for fast, reliable REST endpoints.
 
 ## 🛠️ Tech Stack
 
@@ -17,18 +25,13 @@ This repository contains the Go backend service for **AIpply**. It functions as 
 * **API/Routing:** Gin-Gonic
 * **AI Model:** Google Gemini (via `google.golang.org/genai`), specifically using `gemini-2.0-flash` and `gemini-2.5-flash`
 * **Database (Metrics):** Redis (for tracking generation counts)
-* **Configuration:** From `config-example.yaml` and environment variables
-* **Linting:** Revive
+* **Configuration:** From `config-example.yaml`
 
-## ✨ How It Works: The Prompting Strategy
+## 🔍 How It Works
 
-The core intelligence of this service lies in its detailed, role-based prompts sent to the Gemini model.
+AIpply sends structured, role-based prompts to Google Gemini to generate personalized CVs, cover letters, and interview questions.
+The model responses are returned as clean HTML fragments for the frontend to render.
 
-* **For CVs (`CVPrompt`)**: The prompt instructs the AI to act as an "elite career coach." It takes a JSON array of the user's Q&A and a job description, then synthesizes the narrative answers into "concise, powerful, action-oriented bullet points" associated with the correct job.
-* **For Cover Letters (`CoverLetterPrompt`)**: The prompt sets the AI as an "expert career coach" that analyzes the job description for key skills and the user's answers for strong "stories." It then writes a letter that *explicitly connects* those stories to the job's requirements.
-* **For Questions (`QuestionPrompt`)**: This prompt casts the AI as an "experienced hiring manager," generating 5-7 simple, conversational questions based on the job description and the candidate's stated experience level.
-
-A critical requirement for both the CV and cover letter is that the AI **must return a clean HTML fragment** with no `<html>`, `<body>`, or `<style>` tags, allowing the frontend to handle all styling.
 
 ## 🔌 API Endpoints
 
@@ -47,8 +50,8 @@ All routes are versioned under the `/api/v1` prefix.
 **`POST /generate-questions`**
 ```json
 {
-  "jobDescription": "Looking for a senior Go developer...",
-  "experienceLevel": "Senior (5+ years)"
+  "jobDescription": "Looking for a junior Go developer...",
+  "experienceLevel": "Just Getting Started"
 }
 ```
 
@@ -70,25 +73,42 @@ All routes are versioned under the `/api/v1` prefix.
 }
 ```
 
-## ⚙️ Configuration
+## 📖 Usage
 
-The application is configured using a `config.yaml` file and/or environment variables, managed by Viper.
+To interact with the API, you can use tools like curl, Postman, or integrate it into your application. Here are some curl examples assuming the server is running on `localhost:8080`:
 
-| Environment Variable | `config.yaml` Key | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `API_KEY` | `api_key` | - | **Required.** Your Google Gemini API key. |
-| `REDIS_ADDR` | `redis.addr` | `localhost:6379` | Address for the Redis server. |
-| `REDIS_PASSWORD` | `redis.password` | `""` | Password for the Redis server. |
-| `REDIS_DB` | `redis.db` | `0` | Redis database index. |
-| `SERVER_PORT` | `server.port` | - | Port for the Gin server (e.g., `8080`). |
-| `GIN_MODE` | `server.gin_mode` | `debug` | Gin framework mode (`debug`, `release`, or `test`). |
+- **Health Check**:
+  ```bash
+  curl http://localhost:5050/
+  ```
+
+- **Generate Interview Questions**:
+  ```bash
+  curl -X POST http://localhost:5050/api/v1/generate-questions \
+    -H "Content-Type: application/json" \
+    -d '{"job_description": "Senior Go Developer role focused on backend services.", "experience_level": "Senior (5+ years)"}'
+  ```
+
+- **Generate CV**:
+  ```bash
+  curl -X POST http://localhost:5050/api/v1/generate-cv \
+    -H "Content-Type: application/json" \
+    -d '{"job_description": "Senior Go Developer...", "answers": [{"question": "Your name?", "answer": "Jane Doe"}]}'
+  ```
+
+- **Get Metrics**:
+  ```bash
+  curl http://localhost:5050/api/v1/metrics
+  ```
+
+For more advanced usage, consider wrapping the API in a frontend or scripting it for batch processing.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
   * Go (1.21 or later recommended)
-  * A running Redis instance
+  * A running Redis instance (check the [Docker](docker-compose.yaml) file)
   * A Google Gemini API Key
 
 ### Installation & Running
@@ -158,3 +178,35 @@ The application is configured using a `config.yaml` file and/or environment vari
     # Run from the root directory
     revive -config revive.toml ./...
     ```
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether it's fixing bugs, adding features, improving documentation, or suggesting ideas, your help makes AIpply better for everyone.
+
+### How to Contribute
+1. **Fork the Repository**: Click the "Fork" button at the top of this page.
+2. **Clone Your Fork**: `git clone https://github.com/YOUR_USERNAME/AIpply.git`
+3. **Create a Branch**: Use a descriptive name, e.g., `git checkout -b feature/new-endpoint`
+4. **Make Changes**: Follow the code style (use Go fmt) and add tests where applicable.
+5. **Commit Your Changes**: Use clear commit messages, e.g., `git commit -m "Add support for additional AI models"`
+6. **Push to Your Fork**: `git push origin feature/new-endpoint`
+7. **Open a Pull Request**: Go to the original repository and submit a PR. Reference any related issues.
+
+### Guidelines
+- **Code Style**: Use Go's standard formatting (`go fmt`). Run the linter with `revive -config revive.toml ./...`.
+- **Testing**: Ensure all tests pass (`go test ./...`). Aim for high coverage.
+- **Issues**: Check existing issues before creating a new one. Use labels like "bug", "enhancement", or "documentation".
+- **Code of Conduct**: Be respectful and inclusive. We follow the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/version/2/0/code_of_conduct.html).
+- **Questions?**: Open an issue or discussion for help.
+
+For major changes, please open an issue first to discuss. Thanks for contributing!
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🛤️ Roadmap
+
+- Integrate support for additional AI models (e.g., OpenAI).
+- Expand metrics to include more analytics.
+- Community-suggested features – submit yours via issues!
