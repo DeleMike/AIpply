@@ -40,7 +40,7 @@ func RateLimit() gin.HandlerFunc {
 		// check limit
 		if count >= rateLimitPerDay {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
-				"error":   "You have exceeded your daily limit of 5 requests.",
+				"error":   "You have exceeded your daily limit of 10 requests.",
 				"message": "Please try again in 24 hours.",
 			})
 			return

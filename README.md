@@ -5,6 +5,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/DeleMike/AIpply?style=for-the-badge)](https://goreportcard.com/report/github.com/DeleMike/AIpply)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/DeleMike/AIpply?style=for-the-badge&logo=go)](https://golang.org)
+[![Go Tests](https://img.shields.io/github/actions/workflow/status/DeleMike/AIpply/go.yml?branch=main&label=Tests&style=for-the-badge&logo=go)](https://github.com/DeleMike/AIpply/actions)
+[![codecov](https://img.shields.io/codecov/c/github/DeleMike/AIpply?style=for-the-badge&logo=codecov&token=YOUR_CODECOV_TOKEN)](https://codecov.io/gh/DeleMike/AIpply)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 This repository contains the Go backend service for **AIpply**. It functions as a REST API that leverages the Google Gemini AI to generate tailored CVs, cover letters, and interview questions based on a job description and user-provided answers.
