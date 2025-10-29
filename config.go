@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 )
 
@@ -37,6 +38,7 @@ func LoadConfig() (*Config, error) {
 	viper.AddConfigPath(".")
 
 	viper.BindEnv("api_key", "API_KEY")
+	viper.BindEnv("redis.url", "REDIS_URL")
 	viper.BindEnv("redis.addr", "REDIS_ADDR")
 	viper.BindEnv("redis.password", "REDIS_PASSWORD")
 	viper.BindEnv("redis.db", "REDIS_DB")
@@ -62,11 +64,23 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("unable to decode config into struct: %w", err)
 	}
 
+	if redisURL := viper.GetString("redis.url"); redisURL != "" {
+		opt, err := redis.ParseURL(redisURL)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing REDIS_URL: %w", err)
+		}
+		cfg.Redis.Addr = opt.Addr
+		cfg.Redis.Password = opt.Password
+		cfg.Redis.DB = opt.DB
+		fmt.Println("✓ Using Redis from REDIS_URL")
+	}
+
 	// Print loaded config for verification
 	fmt.Println("Loaded Configuration:")
 	fmt.Println("Server Gin Mode:", cfg.Server.GinMode)
 	fmt.Println("Server port:", cfg.Server.Port)
 	fmt.Println("App Name:", cfg.App.Name)
+	fmt.Println("Redis Addr:", cfg.Redis.Addr)
 
 	return &cfg, nil
 }
