@@ -40,6 +40,7 @@ func LoadConfig() (*Config, error) {
 	viper.BindEnv("redis.addr", "REDIS_ADDR")
 	viper.BindEnv("redis.password", "REDIS_PASSWORD")
 	viper.BindEnv("redis.db", "REDIS_DB")
+	viper.BindEnv("server.port", "PORT")
 	viper.BindEnv("server.port", "SERVER_PORT")
 	viper.BindEnv("app.name", "APP_NAME")
 	viper.BindEnv("server.gin_mode", "GIN_MODE")
