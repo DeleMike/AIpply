@@ -4,7 +4,7 @@ package service
 const QuestionPrompt = `
 You are an experienced hiring manager and interview coach. Your task is to generate a short list of practical, easy-to-answer interview questions based *only* on the provided job description and the candidate's experience level.
 
-Focus on clarity and relevance rather than difficulty. The goal is to help the interviewer quickly understand the candidate’s fit for the role.
+Focus on clarity and relevance rather than difficulty. The goal is to help the interviewer quickly understand the candidate's fit for the role.
 
 Candidate Experience Level: %s
 
@@ -45,7 +45,7 @@ Your goal is to synthesize all this information into a single, cohesive CV docum
     * **Crucially, associate each bullet point with the correct job** from the user's work history. Use context from the answer (e.g., "At my last job..." or "When I was at Google...") to make this connection.
     * **Quantify results** whenever possible (e.g., "Increased app performance by 30%%").
 5.  **Build the CV Sections:**
-    * **Contact Details:** Use the extracted info. If any key contact info (name, email) is missing, use a clear placeholder like ` + "`[Your Full Name]`" + `.
+    * **Contact Details:** Use the extracted info. If any key contact info (name, email) is missing, use a clear placeholder like [Your Full Name].
     * **Professional Summary:** Write a 2-3 sentence summary that aligns the user's strongest skills (from their answers) with the target job description.
     * **Skills:** Create a skills list using the extracted skills AND keywords from the job description.
     * **Work Experience:** List the formatted jobs from Step 3. Place the transformed achievement bullet points (from Step 4) under the correct job.
@@ -56,9 +56,9 @@ Your goal is to synthesize all this information into a single, cohesive CV docum
 * The tone must be professional, modern, and confident.
 * **The entire output must be a single, clean HTML fragment.**
 * **Help the user where necessary.**
-* Use semantic HTML tags: ` + "`<h1>`" + ` for the user's name, ` + "`<h2>`" + ` for main sections (e.g., "Professional Summary"), ` + "`<h3>`" + ` for job titles, ` + "`<h4>`" + ` for company/dates, ` + "`<ul>`" + ` and ` + "`<li>`" + ` for bullet points, and ` + "`<p>`" + ` for paragraphs.
-* **CRITICAL: Do not include any ` + "`<html>`" + `, ` + "`<head>`" + `, or ` + "`<body>`" + ` tags.**
-* **CRITICAL: Do not use any inline CSS (` + "`style=...`" + `) or ` + "`<style>`" + ` tags.** The styling will be handled by the frontend.
+* Use semantic HTML tags: <h1> for the user's name, <h2> for main sections (e.g., "Professional Summary"), <h3> for job titles, <h4> for company/dates, <ul> and <li> for bullet points, and <p> for paragraphs.
+* **CRITICAL: Do not include any <html>, <head>, or <body> tags.**
+* **CRITICAL: Do not use any inline CSS (style=...) or <style> tags.** The styling will be handled by the frontend.
 * **Do not include any commentary, conversation, or text other than the HTML document itself.**
 
 ---
@@ -88,7 +88,7 @@ Your goal is to write a single, cohesive cover letter that strategically links t
 2.  **Analyze the User's Answers:** Use the "question" to understand the context of each "answer".
 3.  **Extract Key Info:**
     * Find the user's full name and contact info from the relevant answers.
-    * **If info is missing, use placeholders** like ` + "`[Your Name]`" + ` and ` + "`[Your Contact Info]`" + `.
+    * **If info is missing, use placeholders** like [Your Name] and [Your Contact Info].
     * Find the 2-3 strongest stories/achievements from the behavioral answers.
 4.  **Synthesize and Connect (The Most Important Step):**
     * Build the body of the letter using the strongest achievements.
@@ -104,9 +104,9 @@ Your goal is to write a single, cohesive cover letter that strategically links t
 * The tone must be professional, confident, and genuinely enthusiastic.
 * **The entire output must be a single, clean HTML fragment.**
 * **Help the user where necessary.**
-* Use ` + "`<p>`" + ` tags for paragraphs and ` + "`<strong>`" + ` for any necessary emphasis.
-* **CRITICAL: Do not include any ` + "`<html>`" + `, ` + "`<head>`" + `, or ` + "`<body>`" + ` tags.**
-* **CRITICAL: Do not use any inline CSS (` + "`style=...`" + `) or ` + "`<style>`" + ` tags.** The styling will be handled by the frontend.
+* Use <p> tags for paragraphs and <strong> for any necessary emphasis.
+* **CRITICAL: Do not include any <html>, <head>, or <body> tags.**
+* **CRITICAL: Do not use any inline CSS (style=...) or <style> tags.** The styling will be handled by the frontend.
 * **Do not include any commentary, conversation, or text other than the cover letter document itself.**
 
 ---
