@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	rateLimitPerDay = 10
-	expiry          = 24 * time.Hour
+	rateLimitPerDay = 18 // 6 full cycles per day (3 endpoints × 6 times)
 	redisPrefix     = "rate_limit:"
 )
 
@@ -27,7 +26,8 @@ func RateLimit() gin.HandlerFunc {
 		}
 
 		ip := c.ClientIP()
-		key := redisPrefix + ip
+		now := time.Now()
+		key := redisPrefix + ip + ":" + now.Format("2006-01-02")
 		ctx := context.Background()
 
 		// get current trial count
@@ -40,11 +40,15 @@ func RateLimit() gin.HandlerFunc {
 		// check limit
 		if count >= rateLimitPerDay {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
-				"error":   "You have exceeded your daily limit of 10 requests.",
-				"message": "Please try again in 24 hours.",
+				"error":   "Daily limit exceeded",
+				"message": "You've reached your daily limit of 6 generations. Please try again in 24 hours.",
 			})
 			return
 		}
+
+		// Compute time until midnight for expiry
+		midnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, now.Location())
+		expiry := time.Until(midnight)
 
 		// update redis data
 		pipe := redisClient.TxPipeline()
