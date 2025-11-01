@@ -14,7 +14,7 @@ Job Description:
 ---
 
 Guidelines:
-- Generate 5-7 clear, conversational questions.
+- Generate 3-4 clear, conversational questions.
 - Questions should be specific to the job description but simple enough to answer in under a minute.
 - Use a mix of practical, opinion-based, and light situational questions.
 - Avoid overly complex behavioral questions.
