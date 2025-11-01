@@ -4,7 +4,6 @@ package routes
 import (
 	"context"
 
-	"github.com/DeleMike/AIpply/api/metrics"
 	"github.com/DeleMike/AIpply/api/service"
 	"github.com/gin-gonic/gin"
 )
@@ -19,8 +18,6 @@ func GenerateQuestions(c *gin.Context) {
 		if err != nil {
 			return nil, err
 		}
-
-		metrics.IncrementCoverLetter()
 
 		return QuestionsResponsePayload{
 			Message:   "Questions generated successfully!",
